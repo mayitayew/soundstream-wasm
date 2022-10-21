@@ -47,8 +47,8 @@ std::unique_ptr<VectorQuantizerInterface> CreateQuantizer(
 std::unique_ptr<VectorQuantizerInterface> CreateQuantizer(
     int num_output_features, const ModelBufferInterface& model_buffer) {
   return ResidualVectorQuantizer::Create(
-      model_buffer.GetBuffer("quantizer"),
-      model_buffer.GetBufferSize("quantizer"));
+      model_buffer.GetBuffer("quantizer.tflite"),
+      model_buffer.GetBufferSize("quantizer.tflite"));
 }
 
 std::unique_ptr<GenerativeModelInterface> CreateGenerativeModel(
@@ -60,8 +60,8 @@ std::unique_ptr<GenerativeModelInterface> CreateGenerativeModel(
 std::unique_ptr<GenerativeModelInterface> CreateGenerativeModel(
     int num_samples_per_hop, int num_output_features,
     const ModelBufferInterface& model_buffer) {
-  return LyraGanModel::Create(model_buffer.GetBuffer("lyragan"),
-                              model_buffer.GetBufferSize("lyragan"),
+  return LyraGanModel::Create(model_buffer.GetBuffer("lyragan.tflite"),
+                              model_buffer.GetBufferSize("lyragan.tflite"),
                               num_output_features);
 }
 
@@ -80,8 +80,8 @@ std::unique_ptr<FeatureExtractorInterface> CreateFeatureExtractor(
     int sample_rate_hz, int num_features, int num_samples_per_hop,
     int num_samples_per_window, const ModelBufferInterface& model_buffer) {
   return SoundStreamEncoder::Create(
-      model_buffer.GetBuffer("soundstream_encoder"),
-      model_buffer.GetBufferSize("soundstream_encoder"));
+      model_buffer.GetBuffer("soundstream_encoder.tflite"),
+      model_buffer.GetBufferSize("soundstream_encoder.tflite"));
 }
 
 std::unique_ptr<FeatureEstimatorInterface> CreateFeatureEstimator(
