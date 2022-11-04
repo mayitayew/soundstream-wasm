@@ -972,9 +972,9 @@ cc_library(
         "@com_google_absl//absl/types:span",
 
         "@gulrak_filesystem//:filesystem",
-        "@org_tensorflow//tensorflow/lite:framework",
-        "@org_tensorflow//tensorflow/lite/delegates/xnnpack:xnnpack_delegate",
-        "@org_tensorflow//tensorflow/lite/kernels:builtin_ops",
+        "//tensorflow/lite:framework",
+        "//tensorflow/lite/delegates/xnnpack:xnnpack_delegate",
+        "//tensorflow/lite/kernels:builtin_ops",
     ],
 )
 
@@ -1016,7 +1016,7 @@ cc_test(
         "@com_google_absl//absl/types:span",
         "@com_google_googletest//:gtest_main",
         "@gulrak_filesystem//:filesystem",
-        "@org_tensorflow//tensorflow/lite:framework",
+        "//tensorflow/lite:framework",
     ],
 )
 
