@@ -175,9 +175,11 @@ inline absl::Status AreParamsSupported(
     }
   }
   if (lyra_config.identifier() != kVersionMinor) {
-    return absl::InvalidArgumentError(absl::StrFormat(
-        "Weights identifier (%d) is not compatible with code identifier (%d).",
-        lyra_config.identifier(), kVersionMinor));
+    // Warn when model version mismatch is detected.
+    std::cout << absl::StrFormat(
+        "WARNING: Model version %d does not match codec version %d. "
+        "This may lead to unexpected behavior.",
+        lyra_config.identifier(), kVersionMinor) << std::endl;
   }
   return absl::OkStatus();
 }

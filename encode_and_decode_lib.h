@@ -13,7 +13,7 @@ std::optional<std::vector<uint8_t>> EncodeWithEncoder(
 
 std::optional<std::vector<int16_t>> DecodeWithDecoder(
     LyraDecoder* decoder, const std::vector<uint8_t>& encoded_data,
-    float packet_loss_rate, float average_burst_length);
+    float packet_loss_rate, float average_burst_length, uint32_t bitrate);
 
 std::optional<std::vector<int16_t>> EncodeAndDecode(
     LyraEncoder* encoder, LyraDecoder* decoder,

@@ -52,7 +52,7 @@ std::optional<std::vector<uint8_t>> EncodeWithEncoder(
 
 std::optional<std::vector<int16_t>> DecodeWithDecoder(
     LyraDecoder* decoder, const std::vector<uint8_t>& encoded_features,
-    float packet_loss_rate, float average_burst_length, int bitrate) {
+    float packet_loss_rate, float average_burst_length, const uint32_t bitrate) {
   // Decode the encoded features and return the reconstructed audio.
   auto gilbert_model =
       GilbertModel::Create(packet_loss_rate, average_burst_length);
@@ -126,75 +126,6 @@ std::optional<std::vector<int16_t>> EncodeAndDecode(
                            packet_loss_rate, average_burst_length,
                            encoder->bitrate());
 }
-
-// bool End2End(const std::string& input_filename,
-//              const std::string& output_filename, const std::string& arg0) {
-//   const std::string output_path =
-//       tools::GetTestdataRunfilesPath(arg0) + output_filename + "_decoded";
-//   const std::string model_path = tools::GetModelRunfilesPath(arg0);
-//   const std::string input_path =
-//       tools::GetTestdataRunfilesPath(arg0) + input_filename;
-//
-//   // Reads the entire wav file into memory.
-//   absl::StatusOr<ReadWavResult> read_wav_result =
-//       Read16BitWavFileToVector(input_path);
-//
-//   if (!read_wav_result.ok()) {
-//     fprintf(stderr, "Reading wavfile failed.\n");
-//     std::cerr << read_wav_result.status() << std::endl;
-//     return false;
-//   }
-//
-//   std::unique_ptr<LyraEncoder> encoder =
-//       chromemedia::codec::LyraEncoder::Create(
-//           /*sample_rate_hz=*/read_wav_result->sample_rate_hz,
-//           /*num_channels=*/read_wav_result->num_channels,
-//           /*bitrate=*/3000,
-//           /*enable_dtx=*/true, model_path);
-//
-//   if (encoder == nullptr) {
-//     fprintf(stderr, "Failed to create encoder.\n");
-//     return false;
-//   }
-//
-//   std::unique_ptr<LyraDecoder> decoder =
-//       chromemedia::codec::LyraDecoder::Create(
-//           /*sample_rate_hz=*/48000,
-//           /*num_channels=*/1, model_path);
-//
-//   if (decoder == nullptr) {
-//     fprintf(stderr, "Failed to create decoder.\n");
-//     return false;
-//   }
-//
-//   std::vector<int16_t> data_to_encode(read_wav_result->samples.begin(),
-//                                       read_wav_result->samples.end());
-//
-//   auto output_or =
-//       EncodeAndDecode(encoder.get(), decoder.get(), data_to_encode,
-//                       /*sample_rate_hz=*/48000, /*packet_loss_rate=*/0.f,
-//                       /*float_average_burst_length=*/1.f);
-//
-//   if (!output_or.has_value()) {
-//     fprintf(stderr, "EncodeAndDecode failed. \n");
-//     return false;
-//   }
-//
-//   absl::Status write_status =
-//       Write16BitWavFileFromVector(output_path, /*kNumChannels=*/1,
-//                                   /*sample_rate_hz=*/48000,
-//                                   output_or.value());
-//   if (!write_status.ok()) {
-//     fprintf(stderr, "Writing output to file failed.");
-//     std::cerr << write_status << std::endl;
-//     return false;
-//   }
-//
-//   fprintf(stdout, "EncodeAndDecode successful.\n");
-//   fprintf(stdout, "Input file: %s\n", input_filename.c_str());
-//   fprintf(stdout, "Decoded output file path: %s\n", output_path.c_str());
-//   return true;
-// }
 
 }  // namespace codec
 }  // namespace chromemedia

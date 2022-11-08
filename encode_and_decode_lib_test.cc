@@ -6,28 +6,26 @@
 #include "lyra_config.h"
 #include "lyra_decoder.h"
 #include "lyra_encoder.h"
-#include "runfiles_util.h"
 
 namespace chromemedia {
 namespace codec {
 namespace {
-
-using tools::GetModelRunfilesPathForTest;
 
 class EncodeAndDecodeLibTest : public testing::Test {
  protected:
   EncodeAndDecodeLibTest()
       : sample_rate_hz_(48000),
         num_channels_(1),
-        bitrate_(3000),
-        encoder_(LyraEncoder::Create(sample_rate_hz_, num_channels_, bitrate_,
-                                     false, GetModelRunfilesPathForTest())),
-        decoder_(LyraDecoder::Create(sample_rate_hz_, num_channels_, bitrate_,
-                                     GetModelRunfilesPathForTest())) {}
+        bitrate_(3200),
+        encoder_(LyraEncoder::Create(
+            sample_rate_hz_, num_channels_, bitrate_,
+                                     false, ghc::filesystem::current_path() / "model_coeffs/")),
+        decoder_(LyraDecoder::Create(sample_rate_hz_, num_channels_,
+                                     ghc::filesystem::current_path() / "model_coeffs/")) {}
 
-  const int sample_rate_hz_ = 0;
-  const int num_channels_ = 0;
-  const int bitrate_ = 3000;
+  const int sample_rate_hz_;
+  const int num_channels_;
+  const int bitrate_;
 
   std::unique_ptr<LyraEncoder> encoder_;
   std::unique_ptr<LyraDecoder> decoder_;
@@ -46,15 +44,9 @@ TEST_F(EncodeAndDecodeLibTest, EncodeSamples) {
 TEST_F(EncodeAndDecodeLibTest, DecodeSamples) {
     std::vector<uint8_t> samples(
         {112, 38, 238, 11, 69, 173, 121, 126, 148, 178, 78, 181, 65, 206,
-        105});
-  auto decode_result = DecodeWithDecoder(decoder_.get(), samples, 0.f, 1.f);
+        105, 112});
+  auto decode_result = DecodeWithDecoder(decoder_.get(), samples, 0.f, 1.f, bitrate_);
   EXPECT_TRUE(decode_result.has_value());
-  std::cerr << "Decode result size: " << decode_result.value().size()
-            << std::endl;
-  for (const auto& sample : decode_result.value()) {
-    std::cerr << sample << " ";
-  }
-
   EXPECT_GE(decode_result.value().size(), 0u);
 }
 

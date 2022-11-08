@@ -110,6 +110,15 @@ cc_library(
     ],
 )
 
+cc_test(
+    name = "encode_and_decode_lib_test",
+    srcs = ["encode_and_decode_lib_test.cc"],
+    deps = [
+        ":encode_and_decode_lib",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
 
 cc_library(
     name = "generative_model_interface",
@@ -390,7 +399,6 @@ cc_library(
         "@com_google_absl//absl/status",
         "@com_google_absl//absl/strings",
         "@com_google_absl//absl/strings:str_format",
-
         "@gulrak_filesystem//:filesystem",
     ],
 )
