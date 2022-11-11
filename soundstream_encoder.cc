@@ -36,7 +36,7 @@ namespace codec {
 std::unique_ptr<SoundStreamEncoder> SoundStreamEncoder::Create(
     const ghc::filesystem::path& model_path) {
   auto model = TfLiteModelWrapper::Create(
-      model_path / "soundstream_encoder.tflite", true);
+      model_path / "soundstream_encoder.tflite", /*use_xnn=*/true, /*int8_quantized=*/true);
   if (model == nullptr) {
     std::cerr << "Unable to create SoundStream encoder TFLite model wrapper.";
     return nullptr;
@@ -47,7 +47,7 @@ std::unique_ptr<SoundStreamEncoder> SoundStreamEncoder::Create(
 std::unique_ptr<SoundStreamEncoder> SoundStreamEncoder::Create(
     const char* encoder_buffer, uint64_t encoder_buffer_size) {
   auto model =
-      TfLiteModelWrapper::Create(encoder_buffer, encoder_buffer_size, true);
+      TfLiteModelWrapper::Create(encoder_buffer, encoder_buffer_size, /*use_xnn=*/true, /*int8_quantized=*/true);
   if (model == nullptr) {
     std::cerr << "Unable to create SoundStream encoder TFLite model wrapper.";
     return nullptr;
@@ -68,11 +68,6 @@ std::optional<std::vector<float>> SoundStreamEncoder::Extract(
   if (!model_->Invoke()) {
     std::cerr << "Unable to invoke SoundStream encoder TFLite model wrapper.";
     return std::nullopt;
-  }
-  for (int i = 1; i < model_->num_input_tensors(); ++i) {
-    absl::Span<float> input_state = model_->get_input_tensor<float>(i);
-    absl::Span<const float> output_state = model_->get_output_tensor<float>(i);
-    std::copy(output_state.begin(), output_state.end(), input_state.begin());
   }
   absl::Span<const float> output = model_->get_output_tensor<float>(0);
   return std::vector<float>(output.begin(), output.end());

@@ -16,11 +16,11 @@
 
 #include <bitset>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <optional>
 #include <utility>
 #include <vector>
-#include <iostream>
 
 #include "absl/memory/memory.h"
 #include "absl/status/status.h"
@@ -64,19 +64,13 @@ std::unique_ptr<LyraEncoder> LyraEncoder::Create(
     }
   }
 
-  const int internal_samples_per_hop =
-      GetNumSamplesPerHop(kInternalSampleRateHz);
-  const int internal_samples_per_window =
-      GetNumSamplesPerWindow(kInternalSampleRateHz);
-  auto feature_extractor = CreateFeatureExtractor(
-      kInternalSampleRateHz, kNumFeatures, internal_samples_per_hop,
-      internal_samples_per_window, model_path);
+  auto feature_extractor = CreateFeatureExtractor(model_path);
   if (feature_extractor == nullptr) {
     std::cerr << "Could not create Features Extractor.";
     return nullptr;
   }
 
-  auto vector_quantizer = CreateQuantizer(kNumFeatures, model_path);
+  auto vector_quantizer = CreateQuantizer(model_path);
   if (vector_quantizer == nullptr) {
     std::cerr << "Could not create Vector Quantizer.";
     return nullptr;
@@ -84,9 +78,9 @@ std::unique_ptr<LyraEncoder> LyraEncoder::Create(
 
   std::unique_ptr<NoiseEstimatorInterface> noise_estimator = nullptr;
   if (enable_dtx) {
-    noise_estimator =
-        NoiseEstimator::Create(sample_rate_hz, internal_samples_per_hop,
-                               internal_samples_per_window, kNumMelBins);
+    noise_estimator = NoiseEstimator::Create(
+        sample_rate_hz, GetNumSamplesPerHop(kInternalSampleRateHz),
+        GetNumSamplesPerWindow(kInternalSampleRateHz), kNumMelBins);
     if (noise_estimator == nullptr) {
       std::cerr << "Could not create Noise Estimator.";
       return nullptr;
@@ -124,19 +118,13 @@ std::unique_ptr<LyraEncoder> LyraEncoder::Create(
     }
   }
 
-  const int internal_samples_per_hop =
-      GetNumSamplesPerHop(kInternalSampleRateHz);
-  const int internal_samples_per_window =
-      GetNumSamplesPerWindow(kInternalSampleRateHz);
-  auto feature_extractor = CreateFeatureExtractor(
-      kInternalSampleRateHz, kNumFeatures, internal_samples_per_hop,
-      internal_samples_per_window, model_buffer);
+  auto feature_extractor = CreateFeatureExtractor(model_buffer);
   if (feature_extractor == nullptr) {
     std::cerr << "Could not create Features Extractor.";
     return nullptr;
   }
 
-  auto vector_quantizer = CreateQuantizer(kNumFeatures, model_buffer);
+  auto vector_quantizer = CreateQuantizer(model_buffer);
   if (vector_quantizer == nullptr) {
     std::cerr << "Could not create Vector Quantizer.";
     return nullptr;
@@ -145,8 +133,8 @@ std::unique_ptr<LyraEncoder> LyraEncoder::Create(
   std::unique_ptr<NoiseEstimatorInterface> noise_estimator = nullptr;
   if (enable_dtx) {
     noise_estimator =
-        NoiseEstimator::Create(sample_rate_hz, internal_samples_per_hop,
-                               internal_samples_per_window, kNumMelBins);
+        NoiseEstimator::Create(sample_rate_hz, GetNumSamplesPerHop(kInternalSampleRateHz),
+                               GetNumSamplesPerWindow(kInternalSampleRateHz), kNumMelBins);
     if (noise_estimator == nullptr) {
       std::cerr << "Could not create Noise Estimator.";
       return nullptr;
@@ -159,7 +147,6 @@ std::unique_ptr<LyraEncoder> LyraEncoder::Create(
       std::move(noise_estimator), std::move(vector_quantizer), sample_rate_hz,
       num_channels, num_quantized_bits, enable_dtx));
 }
-
 
 LyraEncoder::LyraEncoder(
     std::unique_ptr<ResamplerInterface> resampler,
@@ -188,12 +175,10 @@ std::optional<std::vector<uint8_t>> LyraEncoder::Encode(
     audio_for_encoding = absl::MakeConstSpan(processed);
   }
 
-  const int internal_samples_per_hop =
-      GetNumSamplesPerHop(kInternalSampleRateHz);
-  if (audio_for_encoding.size() != internal_samples_per_hop) {
+  if (audio_for_encoding.size() != GetNumSamplesPerHop(kInternalSampleRateHz)) {
     std::cerr << "The number of audio samples has to be exactly "
-               << GetNumSamplesPerHop(sample_rate_hz_) << ", but is "
-               << audio.size() << ".";
+              << GetNumSamplesPerHop(sample_rate_hz_) << ", but is "
+              << audio.size() << ".";
     return std::nullopt;
   }
 

@@ -65,14 +65,14 @@ std::unique_ptr<ResidualVectorQuantizer> ResidualVectorQuantizer::CreateQuantize
 std::unique_ptr<ResidualVectorQuantizer> ResidualVectorQuantizer::Create(
    const ghc::filesystem::path& model_path) {
  auto quantizer_model =
-     TfLiteModelWrapper::Create(model_path / "quantizer.tflite", false);
+     TfLiteModelWrapper::Create(model_path / "quantizer.tflite", /*use_xnn=*/false, /*int8_quantized=*/false);
  return CreateQuantizerFromModel(std::move(quantizer_model));
 }
 
 std::unique_ptr<ResidualVectorQuantizer> ResidualVectorQuantizer::Create(
     const char* buffer, uint64_t buffer_size) {
   auto quantizer_model =
-      TfLiteModelWrapper::Create(buffer, buffer_size, false);
+      TfLiteModelWrapper::Create(buffer, buffer_size, /*use_xnn=*/false, /*int8_quantized=*/false);
   return CreateQuantizerFromModel(std::move(quantizer_model));
 }
 

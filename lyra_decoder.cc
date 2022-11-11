@@ -120,7 +120,7 @@ std::unique_ptr<LyraDecoder> LyraDecoder::Create(
   }
   // All internal components operate at |kInternalSampleRateHz|.
   auto model =
-      CreateGenerativeModel(kNumSamplesPerHop, kNumFeatures, model_path);
+      CreateGenerativeModel( kNumFeatures, model_path);
   if (model == nullptr) {
     std::cerr << "New model could not be instantiated.";
     return nullptr;
@@ -139,7 +139,7 @@ std::unique_ptr<LyraDecoder> LyraDecoder::Create(
     std::cerr << "Could not create Noise Estimator.";
     return nullptr;
   }
-  auto vector_quantizer = CreateQuantizer(kNumFeatures, model_path);
+  auto vector_quantizer = CreateQuantizer( model_path);
   if (vector_quantizer == nullptr) {
     std::cerr << "Could not create Vector Quantizer.";
     return nullptr;
@@ -178,7 +178,7 @@ std::unique_ptr<LyraDecoder> LyraDecoder::Create(
   }
   // All internal components operate at |kInternalSampleRateHz|.
   auto model =
-      CreateGenerativeModel(kNumSamplesPerHop, kNumFeatures, model_buffer);
+      CreateGenerativeModel( kNumFeatures, model_buffer);
   if (model == nullptr) {
     std::cerr << "New model could not be instantiated.";
     return nullptr;
@@ -197,7 +197,7 @@ std::unique_ptr<LyraDecoder> LyraDecoder::Create(
     std::cerr << "Could not create Noise Estimator.";
     return nullptr;
   }
-  auto vector_quantizer = CreateQuantizer(kNumFeatures, model_buffer);
+  auto vector_quantizer = CreateQuantizer(model_buffer);
   if (vector_quantizer == nullptr) {
     std::cerr << "Could not create Vector Quantizer.";
     return nullptr;
