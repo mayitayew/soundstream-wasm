@@ -191,7 +191,7 @@ void CreateDecoder() {
   }
 }
 
-uint64_t EncodeWithLyra(uintptr_t data, uint64_t num_samples, uint32_t sample_rate_hz, uintptr_t output) {
+uint32_t EncodeWithLyra(uintptr_t data, uint32_t num_samples, uint32_t sample_rate_hz, uintptr_t output) {
   // Select encoder to use.
   chromemedia::codec::LyraEncoder* encoder_to_use = nullptr;
   switch (sample_rate_hz) {
@@ -238,7 +238,7 @@ uint64_t EncodeWithLyra(uintptr_t data, uint64_t num_samples, uint32_t sample_ra
   return num_encoded_samples;
 }
 
-uint64_t DecodeWithLyra(uintptr_t data, uint64_t num_samples, uint32_t sample_rate_hz, uintptr_t output) {
+uint32_t DecodeWithLyra(uintptr_t data, uint32_t num_samples, uint32_t sample_rate_hz, uintptr_t output) {
   // Select decoder to use.
   chromemedia::codec::LyraDecoder* decoder_to_use = nullptr;
   switch (sample_rate_hz) {
@@ -287,12 +287,12 @@ bool EncodeAndDecodeWithLyra(uintptr_t data, uint32_t num_samples,
   fprintf(stdout, "EncodeAndDecode called with %d samples.\n", num_samples);
   std::vector<uint8_t> encoded_samples(num_samples);
   uintptr_t encoded_samples_buffer = reinterpret_cast<uintptr_t>(encoded_samples.data());
-  uint64_t num_encoded_samples = EncodeWithLyra(data, num_samples, sample_rate_hz, encoded_samples_buffer);
+  const uint32_t num_encoded_samples = EncodeWithLyra(data, num_samples, sample_rate_hz, encoded_samples_buffer);
   if (num_encoded_samples < 0) {
     // Encoding failed.
     return false;
   }
-  uint64_t num_decoded_samples = DecodeWithLyra(encoded_samples_buffer, num_encoded_samples, sample_rate_hz, out_data);
+  const uint32_t num_decoded_samples = DecodeWithLyra(encoded_samples_buffer, num_encoded_samples, sample_rate_hz, out_data);
   return num_decoded_samples >= 0;
 }
 
